@@ -8,15 +8,13 @@ const int SQRN = 350; // sqrt(n)
 
 template <class KeyType, class ValueType>
 struct node {
-public:
     KeyType Key;
     ValueType Value;
     node() = default;
 
-    node(KeyType key, ValueType value) {
+    node(const KeyType key, const ValueType value) {
         Key = key, Value = value;
     }
-    ~node() = default;
 
     bool operator ==(const node &rhs) const {
         if (Key == rhs.Key && Value == rhs.Value) { return true; }
@@ -52,21 +50,16 @@ struct block {
     int cnt = 0;
     int next = -1;
     node <KeyType, ValueType> list[2 * SQRN + 5];
-
 };
 
 template <class KeyType, class ValueType>
 class UnrolledLinkedList {
 private:
     std::fstream file;
-    std::string file_name = "test";
+    const std::string file_name = "test";
     const int max_cnt = 2 * SQRN;
     const int min_cnt = SQRN;
     int block_cnt = -1;
-
-
-    // todo
-
 
 public:
     UnrolledLinkedList() {
@@ -78,9 +71,10 @@ public:
             file.open(file_name, std::fstream::out);
             file.close();
             file.open(file_name);
+            block_cnt = -1;
             file.seekp(0);
             file.write(reinterpret_cast <char *> (&block_cnt), sizeof(int));
-            file.seekp(4);
+            file.seekp(sizeof(int));
             static block <KeyType, ValueType> temp;
             file.write(reinterpret_cast <char *> (&temp), sizeof(temp));
         }
@@ -116,7 +110,7 @@ public:
     void split(int pos, block <KeyType, ValueType> &now) {
         static block <KeyType, ValueType> tmp;
         for (int i = min_cnt; i < now.cnt; ++i) {
-            tmp.list[i - SQRN] = now.list[i];
+            tmp.list[i - min_cnt] = now.list[i];
         }
         ++block_cnt;
         tmp.cnt = now.cnt - min_cnt;
@@ -154,7 +148,7 @@ public:
     }
 
     void Insert(const node <KeyType, ValueType> &tmp) {
-        Print();
+        //Print();
         static block<KeyType, ValueType> now;
         if (block_cnt == -1) {
             block_cnt = 0;
@@ -173,8 +167,10 @@ public:
          */
         int pos = 0;
         while (true) {
-            ReadBlock(pos, now);
-            if (tmp <= now.max_node) {
+            //std::cout << 3 << '\n';
+
+            ReadLittle(pos, now);
+            if (tmp <= now.max_node && now.cnt != 0) {
                 ReadBlock(pos, now);
                 for (int i = 0; i < now.cnt; ++i) {
                     if (tmp == now.list[i]) { return; }
@@ -213,7 +209,39 @@ public:
     }
 
     void Delete(const node <KeyType, ValueType> &tmp) {
-        // todo
+        if (block_cnt == -1) { return; }
+        static block <KeyType, ValueType> now;
+        int pos = 0;
+        while (pos != -1) {
+            //std::cout << 1 << '\n';
+            ReadLittle(pos, now);
+            if (now.cnt == 0) {
+                pos = now.next;
+                continue;
+            }
+            if (tmp >= now.min_node && tmp <= now.max_node) {
+                ReadBlock(pos, now);
+                for (int i = 0; i < now.cnt; ++i) {
+                    if (now.list[i] > tmp) { return; }
+                    if (now.list[i] == tmp) {
+                        for (int j = i + 1; j < now.cnt; ++j) {
+                            now.list[j - 1] = now.list[j];
+                        }
+                        --now.cnt;
+                        if (now.cnt) {
+                            now.min_node = now.list[0];
+                            now.max_node = now.list[now.cnt - 1];
+                        }
+                        if (now.cnt < min_cnt) { merge(pos, now); }
+                        else { WriteBlock(pos, now); }
+                        return;
+                    }
+                }
+                // todo
+                return;
+            } else if (tmp < now.min_node) { return; }
+            pos = now.next;
+        }
     }
 
     void Find(const KeyType Key) {
@@ -221,6 +249,8 @@ public:
         int pos = 0;
         bool flag = false;
         while (pos != -1) {
+            //std::cout << 2 << '\n';
+
             ReadLittle(pos, now);
             if (now.cnt == 0) {
                 pos = now.next;
@@ -249,9 +279,8 @@ public:
         if (flag) { std::cout << "\n"; }
         else { std::cout << "null\n"; }
     }
-
+    /*
      void Print() {
-        /*
          int pos = 0;
          block <KeyType, ValueType> now;
          std::cout << "114514";
@@ -264,37 +293,42 @@ public:
              pos = now.next;
              std::cout << '\n';
          }
-        */
+
      }
+     */
 
 };
 
 int main() {
+    /*
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.tie(0);
+     */
     UnrolledLinkedList <std::string, int> ull;
     int T;
-    std::cin >> T;
+    scanf("%d", &T);
     while (T--) {
+        //std::cout << T << "asddafgadfag\n";
         char stat[70];
         int val;
-        scanf("%s", &stat);
+        scanf("%s", stat);
         if (strcmp(stat, "insert") == 0) {
-            scanf("%s", &stat);
+            scanf("%s", stat);
             scanf("%d", &val);
             node <std::string, int> tmp(std::string(stat), val);
             ull.Insert(tmp);
         } else if (strcmp(stat, "delete") == 0) {
-            scanf("%s", &stat);
+            scanf("%s", stat);
             scanf("%d", &val);
             node <std::string, int> tmp(std::string(stat), val);
             ull.Delete(tmp);
         } else if (strcmp(stat, "find") == 0) {
-            scanf("%s", &stat);
+            scanf("%s", stat);
             ull.Find(std::string(stat));
         }
+        //ull.Print();
     }
-    ull.Print();
+    //ull.Print();
     return 0;
 }
