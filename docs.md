@@ -33,6 +33,7 @@
 ## _各个类的接口及成员说明_
 ***
 ### 1. 指令类
+````cpp
     class StatementInput {
     private:
         std::string statement;
@@ -43,9 +44,11 @@
         ~StatementInput();
         StatementJudge();
     };
+````
         
 
 ### 2. 书店类
+```cpp
     class Bookstore {
     private:
         AccountSystem acc_sys;
@@ -78,8 +81,10 @@
         ShowFinance(const std::string &count);
         ShowLog();
     };
+```
 
 ### 3. 账户类
+````cpp
     struct UserID_ {
         char ID[31];
         UserID_();
@@ -117,8 +122,10 @@
         Account_ FindAccount(const std::string &id);
         Account_ FindAccount(const UserID_ &id);
     };
+````
 
 ### 4. 图书类
+````cpp
     struct ISBN_ {
         char[21] ISBN;
         ISBN_(const std::string &tmpISBN);
@@ -168,9 +175,9 @@
     class BookSystem {
     private:
         UnrolledLinkedList <ISBN_, int> ISBN_index;
-        UnrolledLinkedList <Name_, int> id_index;
-        UnrolledLinkedList <Author_, int> id_index;
-        UnrolledLinkedList <Keyword_, int> id_index;
+        UnrolledLinkedList <Name_, int> Name_index;
+        UnrolledLinkedList <Author_, int> Author_index;
+        UnrolledLinkedList <Keyword_, int> Keyword_index;
         std::fstream booksystem;
     
     public:
@@ -182,8 +189,10 @@
         void Modify(const std::string &information);
         void Import(const std::string &num, const std::string &cost);
     };
+````
 
 ### 5. 日志类 
+````cpp
     struct FinanceLog_ {
         char Stat[21];
         Book_ Book;
@@ -222,8 +231,10 @@
         ~LogSystem();
         void Log();
     };
+````
 
 ### 6. 登录类
+````cpp
     class LoginSystem {
     private:
         std::vector <std::string> ID;
@@ -235,8 +246,10 @@
         void LogIn();
         void LogOut
     };
+````
 
 ### 7. 块状链表类
+````cpp
     template <class KeyType, class ValueType>
     class UnrolledLinkedList {
     private:
@@ -253,7 +266,7 @@
         ValueType* GetValue(const KeyType &key);
         std::vector<valueType> traverse();
     };
-
+````
 ***
 ## _文件存储说明_
 ***
