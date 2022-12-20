@@ -6,6 +6,55 @@
 const int MAXN = 1e5 + 5;
 const int SQRN = 350; // sqrt(n)
 
+class myString {
+private:
+    char s[68];
+public:
+    myString() = default;
+    myString(const char* t) {
+        int len = strlen(t);
+        if (len > 64) exit(-1);
+        for (int i = 0; i < len; ++i) {
+            s[i] = t[i];
+        }
+        s[len] = '\0';
+    }
+    ~myString() = default;
+    friend bool operator<(const myString &x, const myString &y);
+    friend bool operator>(const myString &x, const myString &y);
+    friend bool operator!=(const myString &x, const myString &y);
+    friend bool operator==(const myString &x, const myString &y);
+    friend std::ostream& operator<<(std::ostream &x, const myString &y);
+};
+
+bool operator<(const myString &x, const myString &y) {
+    return (strcmp(x.s, y.s) < 0);
+}
+
+bool operator>(const myString &x, const myString &y) {
+    return (strcmp(x.s, y.s) > 0);
+}
+
+bool operator==(const myString &x, const myString &y) {
+    return (!strcmp(x.s, y.s));
+}
+
+bool operator!=(const myString &x, const myString &y) {
+    return (strcmp(x.s, y.s));
+}
+
+bool operator<=(const myString &x, const myString &y) {
+    return (x < y) || (x == y);
+}
+bool operator>=(const myString &x, const myString &y) {
+    return (x > y) || (x == y);
+}
+
+std::ostream& operator<<(std::ostream &x, const myString &y) {
+    x << y.s;
+    return x;
+}
+
 template <class KeyType, class ValueType>
 struct node {
     KeyType Key;
@@ -22,7 +71,7 @@ struct node {
     }
 
     bool operator !=(const node &rhs) const {
-        return !(this == rhs);
+        return !(*this == rhs);
     }
 
     bool operator <(const node &rhs) const {
@@ -305,7 +354,7 @@ int main() {
     std::cin.tie(0);
     std::cout.tie(0);
      */
-    UnrolledLinkedList <std::string, int> ull;
+    UnrolledLinkedList <myString, int> ull;
     int T;
     scanf("%d", &T);
     while (T--) {
@@ -316,16 +365,16 @@ int main() {
         if (strcmp(stat, "insert") == 0) {
             scanf("%s", stat);
             scanf("%d", &val);
-            node <std::string, int> tmp(std::string(stat), val);
+            node <myString, int> tmp(myString(stat), val);
             ull.Insert(tmp);
         } else if (strcmp(stat, "delete") == 0) {
             scanf("%s", stat);
             scanf("%d", &val);
-            node <std::string, int> tmp(std::string(stat), val);
+            node <myString, int> tmp(myString(stat), val);
             ull.Delete(tmp);
         } else if (strcmp(stat, "find") == 0) {
             scanf("%s", stat);
-            ull.Find(std::string(stat));
+            ull.Find(myString(stat));
         }
         //ull.Print();
     }
