@@ -4,7 +4,7 @@
 //#include "UnrolledLinkedList.h"
 
 const int MAXN = 1e5 + 5;
-const int SQRN = 8; // sqrt(n)
+const int SQRN = 350; // sqrt(n)
 
 class myString {
 private:
@@ -14,46 +14,42 @@ public:
     myString(const char* t) {
         int len = strlen(t);
         if (len > 64) exit(-1);
-        for (int i = 0; i < len; ++i) {
+        for (register int i = 0; i < len; ++i) {
             s[i] = t[i];
         }
         s[len] = '\0';
     }
     ~myString() = default;
-    friend bool operator<(const myString &x, const myString &y);
-    friend bool operator>(const myString &x, const myString &y);
-    friend bool operator!=(const myString &x, const myString &y);
-    friend bool operator==(const myString &x, const myString &y);
-    friend std::ostream& operator<<(std::ostream &x, const myString &y);
+
+    inline bool operator <(const myString &rhs) const {
+        return (strcmp(this->s, rhs.s) < 0);
+    }
+
+    inline bool operator >=(const myString &rhs) const {
+        return !(*this < rhs);
+    }
+
+    inline bool operator >(const myString &rhs) const {
+        return (strcmp(this->s, rhs.s) > 0);
+    }
+
+    inline bool operator <=(const myString &rhs) const {
+        return !(*this > rhs);
+    }
+
+    inline bool operator ==(const myString &rhs) const {
+        return (!strcmp(this->s, rhs.s));
+    }
+
+    inline bool operator !=(const myString &rhs) const {
+        return !(*this == rhs);
+    }
+
+    std::ostream& operator<<(std::ostream &os) {
+        os << this->s;
+        return os;
+    }
 };
-
-bool operator<(const myString &x, const myString &y) {
-    return (strcmp(x.s, y.s) < 0);
-}
-
-bool operator>(const myString &x, const myString &y) {
-    return (strcmp(x.s, y.s) > 0);
-}
-
-bool operator==(const myString &x, const myString &y) {
-    return (!strcmp(x.s, y.s));
-}
-
-bool operator!=(const myString &x, const myString &y) {
-    return (strcmp(x.s, y.s));
-}
-
-bool operator<=(const myString &x, const myString &y) {
-    return (x < y) || (x == y);
-}
-bool operator>=(const myString &x, const myString &y) {
-    return (x > y) || (x == y);
-}
-
-std::ostream& operator<<(std::ostream &x, const myString &y) {
-    x << y.s;
-    return x;
-}
 
 template <class KeyType, class ValueType>
 struct node {
@@ -61,34 +57,34 @@ struct node {
     ValueType Value;
     node() = default;
 
-    node(const KeyType key, const ValueType value) {
+    node(const KeyType &key, const ValueType &value) {
         Key = key, Value = value;
     }
 
-    bool operator ==(const node &rhs) const {
+    inline bool operator ==(const node &rhs) const {
         if (Key == rhs.Key && Value == rhs.Value) { return true; }
         return false;
     }
 
-    bool operator !=(const node &rhs) const {
+    inline bool operator !=(const node &rhs) const {
         return !(*this == rhs);
     }
 
-    bool operator <(const node &rhs) const {
+    inline bool operator <(const node &rhs) const {
         if (Key != rhs.Key) { return Key < rhs.Key; }
         return Value < rhs.Value;
     }
 
-    bool operator >=(const node &rhs) const {
+    inline bool operator >=(const node &rhs) const {
         return !(*this < rhs);
     }
 
-    bool operator >(const node &rhs) const {
+    inline bool operator >(const node &rhs) const {
         if (Key != rhs.Key) { return Key > rhs.Key; }
         return Value > rhs.Value;
     }
 
-    bool operator <=(const node &rhs) const {
+    inline bool operator <=(const node &rhs) const {
         return !(*this > rhs);
     }
 };
@@ -158,7 +154,7 @@ public:
 
     void split(int pos, block <KeyType, ValueType> &now) {
         static block <KeyType, ValueType> tmp;
-        for (int i = min_cnt; i < now.cnt; ++i) {
+        for (register int i = min_cnt; i < now.cnt; ++i) {
             tmp.list[i - min_cnt] = now.list[i];
         }
         ++block_cnt;
@@ -186,7 +182,7 @@ public:
             return;
         }
         ReadBlock(now.next, tmp);
-        for (int i = now.cnt; i < now.cnt + tmp.cnt; ++i) {
+        for (register int i = now.cnt; i < now.cnt + tmp.cnt; ++i) {
             now.list[i] = tmp.list[i - now.cnt];
         }
         now.cnt += tmp.cnt;
@@ -197,7 +193,6 @@ public:
     }
 
     void Insert(const node <KeyType, ValueType> &tmp) {
-        //Print();
         static block<KeyType, ValueType> now;
         if (block_cnt == -1) {
             block_cnt = 0;
@@ -208,23 +203,15 @@ public:
             WriteBlock(0, now);
             return;
         }
-        /*
-        ReadBlock(0, now);
-        std::cout << "now " << tmp.Key << " " << tmp.Value << "\n";
-        std::cout << "111  " << now.max_node.Key << " " << now.max_node.Value << "\n";
-        std::cout << "222  " << now.min_node.Key << " " << now.min_node.Value << "\n";
-         */
         int pos = 0;
         while (true) {
-            //std::cout << 3 << '\n';
-
             ReadLittle(pos, now);
             if (tmp <= now.max_node && now.cnt != 0) {
                 ReadBlock(pos, now);
-                for (int i = 0; i < now.cnt; ++i) {
+                for (register int i = 0; i < now.cnt; ++i) {
                     if (tmp == now.list[i]) { return; }
                     if (tmp < now.list[i]) {
-                        for (int j = now.cnt; j > i; --j) {
+                        for (register int j = now.cnt; j > i; --j) {
                             now.list[j] = now.list[j - 1];
                         }
                         ++now.cnt;
@@ -241,7 +228,6 @@ public:
                     }
                 }
             }
-
             if (now.next == -1) { break; }
             pos = now.next;
         }
@@ -262,7 +248,6 @@ public:
         static block <KeyType, ValueType> now;
         int pos = 0;
         while (pos != -1) {
-            //std::cout << 1 << '\n';
             ReadLittle(pos, now);
             if (now.cnt == 0) {
                 pos = now.next;
@@ -270,7 +255,7 @@ public:
             }
             if (tmp >= now.min_node && tmp <= now.max_node) {
                 ReadBlock(pos, now);
-                for (int i = 0; i < now.cnt; ++i) {
+                for (register int i = 0; i < now.cnt; ++i) {
                     if (now.list[i] > tmp) { return; }
                     if (now.list[i] == tmp) {
                         for (int j = i + 1; j < now.cnt; ++j) {
@@ -286,37 +271,25 @@ public:
                         return;
                     }
                 }
-                // todo
                 return;
             } else if (tmp < now.min_node) { return; }
             pos = now.next;
         }
     }
 
-    void Find(const KeyType Key) {
+    void Find(const KeyType &Key) {
         static block <KeyType, ValueType> now;
         int pos = 0;
         bool flag = false;
         while (pos != -1) {
-            //std::cout << 2 << '\n';
-
             ReadLittle(pos, now);
             if (now.cnt == 0) {
                 pos = now.next;
                 continue;
             }
-            /*
-            std::cout << Key << "xxx";
-            std::cout << "big" << now.max_node.Key << " " << now.max_node.Value << '\n';
-            std::cout << now.min_node.Key << " " << now.min_node.Value << '\n';
-            std::cout << now.cnt << '\n';
-             */
-
             if (Key <= now.max_node.Key && Key >= now.min_node.Key) {
-                //std::cout << Key << "xxx";
                 ReadBlock(pos, now);
-                for (int i = 0; i < now.cnt; ++i) {
-                    //std::cout << Key << " ? " << now.list[i].Value << " " << now.list[i].Key << "\n";
+                for (register int i = 0; i < now.cnt; ++i) {
                     if (now.list[i].Key == Key) {
                         std::cout << now.list[i].Value << " ";
                         flag = true;
@@ -328,29 +301,12 @@ public:
         if (flag) { std::cout << "\n"; }
         else { std::cout << "null\n"; }
     }
-     void Print() {
-         int pos = 0;
-         block <KeyType, ValueType> now;
-         while (pos != -1) {
-             ReadBlock(pos, now);
-             std::cout << pos << " " << now.cnt << "\n";
-             std::cout << "max = " << now.max_node.Key << " " << now.max_node.Value << "\n";
-             std::cout << "min = " << now.min_node.Key << " " << now.min_node.Value << "\n";
-             for (int i = 0; i < now.cnt; ++i) {
-                 std::cout << now.list[i].Key << " " << now.list[i].Value << std::endl;
-             }
-             pos = now.next;
-             std::cout << std::endl;
-         }
-     }
 };
 
 int main() {
-    /*
     std::ios::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.tie(0);
-     */
     UnrolledLinkedList <myString, int> ull;
     int T;
     scanf("%d", &T);
@@ -358,27 +314,20 @@ int main() {
         char stat[70];
         int val;
         scanf("%s", stat);
-        //std::cout << stat << " ";
         if (strcmp(stat, "insert") == 0) {
             scanf("%s", stat);
             scanf("%d", &val);
-            //std::cout << stat << " " << val << "\n";
             node <myString, int> tmp(myString(stat), val);
             ull.Insert(tmp);
         } else if (strcmp(stat, "delete") == 0) {
             scanf("%s", stat);
             scanf("%d", &val);
-            //std::cout << stat << " " << val << "\n";
             node <myString, int> tmp(myString(stat), val);
             ull.Delete(tmp);
         } else if (strcmp(stat, "find") == 0) {
             scanf("%s", stat);
-            //std::cout << stat << "\n";
             ull.Find(myString(stat));
         }
-        //std::cout << "T = " << T << "\n";
-        //ull.Print();
     }
-    //ull.Print();
     return 0;
 }
