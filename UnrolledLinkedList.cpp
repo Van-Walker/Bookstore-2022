@@ -4,7 +4,7 @@
 //#include "UnrolledLinkedList.h"
 
 const int MAXN = 1e5 + 5;
-const int SQRN = 350; // sqrt(n)
+const int SQRN = 8; // sqrt(n)
 
 class myString {
 private:
@@ -105,7 +105,7 @@ template <class KeyType, class ValueType>
 class UnrolledLinkedList {
 private:
     std::fstream file;
-    const std::string file_name = "test";
+    const std::string file_name = "test_ull";
     const int max_cnt = 2 * SQRN;
     const int min_cnt = SQRN;
     int block_cnt = -1;
@@ -181,7 +181,7 @@ public:
             return;
         }
         ReadLittle(now.next, tmp);
-        if (now.cnt + tmp.next > max_cnt) {
+        if (now.cnt + tmp.cnt > max_cnt) {
             WriteBlock(pos, now);
             return;
         }
@@ -328,24 +328,21 @@ public:
         if (flag) { std::cout << "\n"; }
         else { std::cout << "null\n"; }
     }
-    /*
      void Print() {
          int pos = 0;
          block <KeyType, ValueType> now;
-         std::cout << "114514";
          while (pos != -1) {
              ReadBlock(pos, now);
-             std::cout << now.cnt << "xssadf\n";
+             std::cout << pos << " " << now.cnt << "\n";
+             std::cout << "max = " << now.max_node.Key << " " << now.max_node.Value << "\n";
+             std::cout << "min = " << now.min_node.Key << " " << now.min_node.Value << "\n";
              for (int i = 0; i < now.cnt; ++i) {
                  std::cout << now.list[i].Key << " " << now.list[i].Value << std::endl;
              }
              pos = now.next;
-             std::cout << '\n';
+             std::cout << std::endl;
          }
-
      }
-     */
-
 };
 
 int main() {
@@ -358,24 +355,28 @@ int main() {
     int T;
     scanf("%d", &T);
     while (T--) {
-        //std::cout << T << "asddafgadfag\n";
         char stat[70];
         int val;
         scanf("%s", stat);
+        //std::cout << stat << " ";
         if (strcmp(stat, "insert") == 0) {
             scanf("%s", stat);
             scanf("%d", &val);
+            //std::cout << stat << " " << val << "\n";
             node <myString, int> tmp(myString(stat), val);
             ull.Insert(tmp);
         } else if (strcmp(stat, "delete") == 0) {
             scanf("%s", stat);
             scanf("%d", &val);
+            //std::cout << stat << " " << val << "\n";
             node <myString, int> tmp(myString(stat), val);
             ull.Delete(tmp);
         } else if (strcmp(stat, "find") == 0) {
             scanf("%s", stat);
+            //std::cout << stat << "\n";
             ull.Find(myString(stat));
         }
+        //std::cout << "T = " << T << "\n";
         //ull.Print();
     }
     //ull.Print();
