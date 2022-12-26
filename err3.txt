@@ -1,0 +1,51 @@
+50
+insert baba 4
+find baba 
+find baba 
+insert bba 10
+delete baba 9
+find bba 
+delete bba 6
+insert ab 3
+insert baab 9
+find bba 
+delete bba 5
+find ab 
+insert aa 1
+delete ab 4
+insert baa 7
+insert aa 3
+delete baa 9
+insert babb 10
+find aa 
+delete baa 3
+insert bbaa 3
+delete aa 9
+insert ba 9
+insert baba 4
+insert bbaa 9
+find babb 
+delete aa 9
+delete ab 2
+delete bbaa 2
+delete baba 6
+find bbaa 
+insert bbb 3
+insert aab 4
+insert ab 10
+insert abb 10
+insert bba 5
+delete abb 5
+insert bb 6
+find abb 
+delete aa 10
+delete bba 4
+insert aaaa 6
+find ab 
+delete abb 3
+insert baa 6
+insert babb 1
+find bbaa 
+delete baab 1
+delete baa 3
+insert bba 3

@@ -1,0 +1,21 @@
+20
+insert aabb 3
+find aabb 
+delete aabb 7
+insert bab 1
+find aabb 
+insert aaab 2
+insert ab 10
+find aaab 
+delete ab 6
+insert baaa 2
+insert baa 7
+delete ab 1
+delete baa 10
+find ab 
+find baaa 
+insert aba 4
+insert ab 2
+insert bbb 3
+find ab 
+insert ab 10
