@@ -1,9 +1,6 @@
 #include "TokenScanner.h"
 
 int main() {
-    std::ios::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
     string str;
     char ch[1005];
     bool flag = true;
