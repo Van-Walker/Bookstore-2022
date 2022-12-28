@@ -1,18 +1,17 @@
 #include "TokenScanner.h"
 
-void Init() {
-    myString sjtu("root");
-    if (acc_sys.ID_to_pos(sjtu) != -1) {
-        acc_sys.Register(myString("root"), myString("sjtu"), myString("root"), 7);
-    }
-    // todo: Init of Log
-}
-
 int main() {
+    std::ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
     string str;
     char ch[1005];
     bool flag = true;
-    Init();
+    int cnt_ = 0;
+    myString root("root");
+    if (acc_sys.ID_to_pos(root) == -1) {
+        acc_sys.Register(myString("root"), myString("sjtu"), myString("root"), 7);
+    }
     while (flag) {
         if (!getline(cin, str)) { break; }
         if (str.size() > 1000) { cout << "Invalid\n"; }
@@ -21,6 +20,5 @@ int main() {
             Work(ch, flag);
         }
     }
-    // todo: log记录并输出
     return 0;
 }
